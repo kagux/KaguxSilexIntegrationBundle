@@ -1,0 +1,7 @@
+parameters:
+ silex.controller_resolver.class: Kagux\SilexIntegrationBundle\HttpKernel\ControllerResolver
+
+services:
+ silex.controller_resolver:
+    class: %silex.controller_resolver.class%
+    arguments: [@original.controller_resolver]
