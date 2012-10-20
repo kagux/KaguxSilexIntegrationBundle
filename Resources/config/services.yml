@@ -1,7 +1,26 @@
 parameters:
  silex.controller_resolver.class: Kagux\SilexIntegrationBundle\HttpKernel\ControllerResolver
+ silex.routes.loader.class: Kagux\SilexIntegrationBundle\Router\Loader\SilexLoader
+ silex.app.class: Silex\Application
+ silex.controller.parser: Kagux\SilexIntegrationBundle\Controller\ControllerParser
 
 services:
+ silex.app:
+    class: %silex.app.class%
+
  silex.controller_resolver:
     class: %silex.controller_resolver.class%
-    arguments: [@original.controller_resolver]
+    arguments: [@original.controller_resolver, @silex.app]
+
+ silex.routes.loader:
+    class:  %silex.routes.loader.class%
+    arguments: [@silex.app]
+    tags:
+     - { name: routing.loader, priority: -10 }
+
+ silex.controller.parser:
+    class: %silex.controller.parser%
+    arguments: [@kernel]
+    tags:
+    -  { name: monolog.logger, channel: request}
+

@@ -21,7 +21,13 @@ class KaguxSilexIntegrationExtension extends Extension
     {
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
-
+        if(isset( $config['app_service'])) {
+            $container->setParameter('silex.app.enabled', true);
+            $container->setParameter('silex.app.service', $config['app_service']);
+        }
+        else{
+            $container->setParameter('silex.app.enabled', false);
+        }
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
     }
