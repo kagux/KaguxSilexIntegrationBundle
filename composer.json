@@ -1,5 +1,5 @@
 {
-    "name": "kagux/silex-integration-bundle",
+    "name": "kagux/symfony2-silex-integration-bundle",
     "type": "symfony-bundle",
     "description": "Allows to drop in Silex project",
     "keywords": ["Silex"],
@@ -11,6 +11,7 @@
         }
     ],
     "require": {
+        "php": ">=5.3.0",
         "symfony/framework-bundle": "2.1.*"
     },
     "autoload": {
