@@ -20,7 +20,6 @@ class SilexIntegrationPass  implements CompilerPassInterface
             $container->setDefinition('original.controller_resolver', $container->findDefinition('controller_resolver'));
             $container->setAlias('controller_resolver',new Alias('silex.controller_resolver'),false);
             $container->setAlias('silex.app', new Alias($container->getParameter('silex.app.service')));
-//            $container->setAlias('controller_name_converter', new Alias('silex.controller.parser'));
         }
     }
 }
