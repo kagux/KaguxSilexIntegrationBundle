@@ -20,12 +20,18 @@ class ApplicationIntegrator
     public function integrate()
     {
         $this->app->flush();
+        $this->setDebugMode();
         $this->integrateEventDispatcher();
         $this->integrateTwig();
         return $this->app;
     }
 
-    public function integrateTwig()
+    private function setDebugMode()
+    {
+        $this->app['debug'] = in_array($this->container->get('kernel')->getEnvironment(), array('test', 'dev'));
+    }
+
+    private function integrateTwig()
     {
         if ($this->app->offsetExists('twig')) {
             /** @var $twig \Twig_Environment */
@@ -42,7 +48,7 @@ class ApplicationIntegrator
         }
     }
 
-    public function integrateEventDispatcher()
+    private function integrateEventDispatcher()
     {
         $event_dispatcher = $this->container->get('event_dispatcher');
         $event_dispatcher->addSubscriber($this->app);
