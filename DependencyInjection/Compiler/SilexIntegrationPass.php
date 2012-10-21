@@ -11,13 +11,9 @@ class SilexIntegrationPass  implements CompilerPassInterface
 
     public function process(ContainerBuilder $container)
     {
-        if(!$container->getParameter('silex.app.enabled')) {
-            $container->removeDefinition('silex.controller_resolver');
-        }
-        else{
-            $container->setDefinition('original.controller_resolver', $container->findDefinition('controller_resolver'));
-            $container->setAlias('controller_resolver',new Alias('silex.controller_resolver'),false);
-            $container->setAlias('silex.app', new Alias($container->getParameter('silex.app.service')));
-        }
+        if(!$container->getParameter('silex.app.enabled')) return;
+        $container->setDefinition('original.controller_resolver', $container->findDefinition('controller_resolver'));
+        $container->setAlias('controller_resolver',new Alias('silex.controller_resolver'),false);
+        $container->setAlias('silex.app', new Alias($container->getParameter('silex.app.service')));
     }
 }
