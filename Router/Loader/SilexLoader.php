@@ -27,27 +27,27 @@ class SilexLoader  extends Loader
         /** @var $silex_routes  \Symfony\Component\Routing\RouteCollection */
         $this->app->flush(); //check with this one commented
         $silex_routes =  $this->app['routes'];
-        return $this->wrapRoutes($silex_routes);
+        return $this->integrateRoutes($silex_routes);
     }
 
-    private function wrapRoutes(RouteCollection $routes)
+    private function integrateRoutes(RouteCollection $routes)
     {
-        $wrappedRoutes = new RouteCollection;
+        $integratedRoutes = new RouteCollection;
 
         foreach($routes as $name=>$route){
             /** @var $route \Symfony\Component\Routing\Route */
             if ($route instanceof RouteCollection){
                 /** @var $route \Symfony\Component\Routing\RouteCollection */
-                $wrappedRoutes->addCollection($this->wrapRoutes($route));
+                $integratedRoutes->addCollection($this->integrateRoutes($route));
             }
             else {
-                $wrappedRoute = new Route($route->getPattern()) ;
-                $wrappedRoute->setDefault('_controller','silex');
-                $wrappedRoutes->add($name, $wrappedRoute);
+                $integratedRoute =clone $route;
+                $integratedRoute->setDefault('_controller','silex');
+                $integratedRoutes->add($name, $integratedRoute);
             }
         }
 
-        return $wrappedRoutes;
+        return $integratedRoutes;
 
     }
 

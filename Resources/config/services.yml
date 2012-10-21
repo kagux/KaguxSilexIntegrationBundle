@@ -2,18 +2,29 @@ parameters:
  silex.controller_resolver.class: Kagux\SilexIntegrationBundle\HttpKernel\ControllerResolver
  silex.routes.loader.class: Kagux\SilexIntegrationBundle\Router\Loader\SilexLoader
  silex.app.class: Silex\Application
+ silex.app.integrator.class: Kagux\SilexIntegrationBundle\Silex\ApplicationIntegrator
 
 services:
+
  silex.app:
     class: %silex.app.class%
 
+ silex.app.integrator:
+    class: %silex.app.integrator.class%
+    arguments: [@service_container, @silex.app]
+
+ integrated.silex.app:
+    class: %silex.app.class%
+    factory_service: silex.app.integrator
+    factory_method: getIntegratedApplication
+
  silex.controller_resolver:
     class: %silex.controller_resolver.class%
-    arguments: [@original.controller_resolver, @silex.app]
+    arguments: [@original.controller_resolver, @integrated.silex.app]
 
  silex.routes.loader:
     class:  %silex.routes.loader.class%
-    arguments: [@silex.app]
+    arguments: [@integrated.silex.app]
     tags:
      - { name: routing.loader, priority: -10 }
 
