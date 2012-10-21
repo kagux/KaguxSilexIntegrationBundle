@@ -22,13 +22,18 @@ class ApplicationIntegrator
     {
         $this->app->flush();
         $this->setDebugMode();
+        if ($this->app->offsetExists('db')) $this->integrateDoctrine();
+        if ($this->app->offsetExists('db.orm.em')) $this->integrateDoctrineORM();
+        if ($this->app->offsetExists('twig')) $this->integrateTwig();
         $this->integrateEventDispatcher();
-        $this->integrateDoctrine();
-        $this->integrateTwig();
         return $this->app;
     }
-
     private function integrateDoctrine()
+    {
+        $this->app['db']=$this->container->get('doctrine.dbal.default_connection');
+    }
+
+    private function integrateDoctrineORM()
     {
         /** @var $silex_em  \Doctrine\ORM\EntityManager*/
         $silex_em = $this->app['db.orm.em'];
@@ -48,7 +53,6 @@ class ApplicationIntegrator
             }
         }
         $this->app['db.orm.em']=$em;
-        $this->app['db']=$this->container->get('doctrine.dbal.default_connection');
     }
 
     private function setDebugMode()
@@ -58,19 +62,16 @@ class ApplicationIntegrator
 
     private function integrateTwig()
     {
-        if ($this->app->offsetExists('twig')) {
-            /** @var $twig \Twig_Environment */
-            $twig = $this->container->get('twig');
-            /** @var $loader  \Twig_Loader_Chain*/
-            $loader = $twig->getLoader();
-            if (!$loader instanceof \Twig_Loader_Chain) {
-                $loader = new \Twig_Loader_Chain (array($loader));
-                $twig->setLoader($loader);
-            }
-            $loader->addLoader($this->app['twig.loader']);
-            $this->app['twig'] = $twig;
-
+        /** @var $twig \Twig_Environment */
+        $twig = $this->container->get('twig');
+        /** @var $loader  \Twig_Loader_Chain*/
+        $loader = $twig->getLoader();
+        if (!$loader instanceof \Twig_Loader_Chain) {
+            $loader = new \Twig_Loader_Chain (array($loader));
+            $twig->setLoader($loader);
         }
+        $loader->addLoader($this->app['twig.loader']);
+        $this->app['twig'] = $twig;
     }
 
     private function integrateEventDispatcher()
