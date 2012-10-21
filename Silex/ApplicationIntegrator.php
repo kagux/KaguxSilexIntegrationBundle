@@ -19,16 +19,38 @@ class ApplicationIntegrator
 
     public function getIntegratedApplication()
     {
-        /** @var $event_dispatcher \Symfony\Component\EventDispatcher\EventDispatcher */
         $this->app->flush();
-        $event_dispatcher =$this->container->get('event_dispatcher');
+        $this->integrateEventDispatcher();
+        $this->integrateTwig();
+        return $this->app;
+    }
+
+    public function integrateTwig()
+    {
+        if ($this->app->offsetExists('twig')) {
+            /** @var $twig \Twig_Environment */
+            $twig = $this->container->get('twig');
+            /** @var $loader  \Twig_Loader_Chain*/
+            $loader = $twig->getLoader();
+            if (!$loader instanceof \Twig_Loader_Chain) {
+                $loader = new \Twig_Loader_Chain (array($loader));
+                $twig->setLoader($loader);
+            }
+            $loader->addLoader($this->app['twig.loader']);
+            $this->app['twig'] = $twig;
+
+        }
+    }
+
+    public function integrateEventDispatcher()
+    {
+        $event_dispatcher = $this->container->get('event_dispatcher');
         $event_dispatcher->addSubscriber($this->app);
         $this->addSilexListeners(SilexEvents::AFTER);
         $this->addSilexListeners(SilexEvents::BEFORE);
         $this->addSilexListeners(SilexEvents::ERROR);
         $this->addSilexListeners(SilexEvents::FINISH);
-        $this->app['dispatcher']=$event_dispatcher;
-        return $this->app;
+        $this->app['dispatcher'] = $event_dispatcher;
     }
 
     private function addSilexListeners($eventName)
