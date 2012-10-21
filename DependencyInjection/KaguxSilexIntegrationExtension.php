@@ -28,8 +28,8 @@ class KaguxSilexIntegrationExtension extends Extension
         $container->setParameter('silex.app.enabled', true);
         $container->setParameter('silex.app.service', $config['app_service']);
         $this->addClassesToCompile(array(
-            'Kagux\\SilexIntegrationBundle\\HttpKernel\ControllerResolver',
-            'Kagux\\SilexIntegrationBundle\\Silex\ApplicationIntegrator',
+//            'Kagux\\SilexIntegrationBundle\\HttpKernel\ControllerResolver',
+//            'Kagux\\SilexIntegrationBundle\\Silex\ApplicationIntegrator',
         ));
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');

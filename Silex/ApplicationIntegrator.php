@@ -3,6 +3,7 @@
 namespace Kagux\SilexIntegrationBundle\Silex;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Kagux\SilexIntegrationBundle\Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Silex\SilexEvents;
 use Silex\Application;
 
@@ -22,8 +23,32 @@ class ApplicationIntegrator
         $this->app->flush();
         $this->setDebugMode();
         $this->integrateEventDispatcher();
+        $this->integrateDoctrine();
         $this->integrateTwig();
         return $this->app;
+    }
+
+    private function integrateDoctrine()
+    {
+        /** @var $silex_em  \Doctrine\ORM\EntityManager*/
+        $silex_em = $this->app['db.orm.em'];
+        /** @var $em  \Doctrine\ORM\EntityManager*/
+        $em=$this->container->get('doctrine.orm.default_entity_manager');
+        $configuration = $em->getConfiguration();
+        $metadata_driver= $configuration->getMetadataDriverImpl();
+        $silex_configuration=$silex_em->getConfiguration();
+        $merged_driver = new MappingDriverChain;
+        $merged_driver->addDriver($silex_configuration->getMetadataDriverImpl());
+        $merged_driver->addDriver($metadata_driver);
+        $configuration->setMetadataDriverImpl($merged_driver);
+        $event_manager = $em->getEventManager();
+        foreach($silex_em->getEventManager()->getListeners() as $events => $listeners){
+            foreach($listeners as $listener){
+                $event_manager->addEventListener($events,$listener);
+            }
+        }
+        $this->app['db.orm.em']=$em;
+        $this->app['db']=$this->container->get('doctrine.dbal.default_connection');
     }
 
     private function setDebugMode()
@@ -66,5 +91,7 @@ class ApplicationIntegrator
         }
 
     }
+
+
 
 }
