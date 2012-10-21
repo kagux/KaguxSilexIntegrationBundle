@@ -20,13 +20,12 @@ class ApplicationIntegrator
 
     public function integrate()
     {
-        $this->app->flush();
+        if($this->container->get('request')->get('_controller') != 'silex') return;
         $this->setDebugMode();
         if ($this->app->offsetExists('db')) $this->integrateDoctrine();
         if ($this->app->offsetExists('db.orm.em')) $this->integrateDoctrineORM();
         if ($this->app->offsetExists('twig')) $this->integrateTwig();
         $this->integrateEventDispatcher();
-        return $this->app;
     }
     private function integrateDoctrine()
     {

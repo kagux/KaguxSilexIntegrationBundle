@@ -18,6 +18,7 @@ class Converter
     public function convert()
     {
         if($this->request->get('_controller')!='silex') return;
+        $this->app->flush();
         /** @var $routes \Symfony\Component\Routing\RouteCollection */
         $routes = $this->app['routes'];
         $silex_route = $routes->get($this->request->get('_route'));
