@@ -17,7 +17,7 @@ class ApplicationIntegrator
         $this->app=$app;
     }
 
-    public function getIntegratedApplication()
+    public function integrate()
     {
         $this->app->flush();
         $this->integrateEventDispatcher();

@@ -12,19 +12,16 @@ services:
  silex.app.integrator:
     class: %silex.app.integrator.class%
     arguments: [@service_container, @silex.app]
-
- integrated.silex.app:
-    class: %silex.app.class%
-    factory_service: silex.app.integrator
-    factory_method: getIntegratedApplication
+    tags:
+      - { name: kernel.event_listener, event: kernel.request, method: integrate, priority: 256}
 
  silex.controller_resolver:
     class: %silex.controller_resolver.class%
-    arguments: [@original.controller_resolver, @integrated.silex.app]
+    arguments: [@original.controller_resolver, @silex.app]
 
  silex.routes.loader:
     class:  %silex.routes.loader.class%
-    arguments: [@integrated.silex.app]
+    arguments: [@silex.app]
     tags:
      - { name: routing.loader, priority: -10 }
 
