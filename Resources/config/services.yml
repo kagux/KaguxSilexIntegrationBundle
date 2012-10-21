@@ -3,6 +3,7 @@ parameters:
  silex.routes.loader.class: Kagux\SilexIntegrationBundle\Router\Loader\SilexLoader
  silex.app.class: Silex\Application
  silex.app.integrator.class: Kagux\SilexIntegrationBundle\Silex\ApplicationIntegrator
+ silex.route.converter.class: Kagux\SilexIntegrationBundle\Silex\Route\Converter
 
 services:
 
@@ -25,3 +26,9 @@ services:
     tags:
      - { name: routing.loader, priority: -10 }
 
+ silex.route.converter:
+    class: %silex.route.converter.class%
+    arguments: [@silex.app, @request]
+    scope: request
+    tags:
+      - { name: kernel.event_listener, event: kernel.request, method: convert, priority: -10}

@@ -33,21 +33,6 @@ class ControllerResolver implements ControllerResolverInterface
      */
     private function getResolver(Request $request)
     {
-        if ($request->get('_controller') instanceof \Closure){
-            return  $this->app['resolver'];
-        }
-        elseif($request->get('_controller')=='silex'){
-            $this->app->flush();
-            /** @var $route \Symfony\Component\Routing\Route */
-            $route = $request->get('_route');
-            /** @var $routes \Symfony\Component\Routing\RouteCollection */
-            $routes = $this->app['routes'];
-            $controller = $routes->get($route)->getDefault('_controller');
-            $request->attributes->set('_controller', $controller);
-            return  $this->app['resolver'];
-        }
-        else{
-             return $this->original_controller_resolver;
-        }
+        return ($request->get('_controller') instanceof \Closure)?$this->app['resolver']: $this->original_controller_resolver;
     }
 }
