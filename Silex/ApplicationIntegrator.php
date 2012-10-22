@@ -3,8 +3,8 @@
 namespace Kagux\SilexIntegrationBundle\Silex;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
-use Kagux\SilexIntegrationBundle\Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Silex\SilexEvents;
 use Silex\Application;
 
@@ -21,7 +21,7 @@ class ApplicationIntegrator
 
     public function integrate(GetResponseEvent $event)
     {
-//        if($this->container->get('request')->get('_controller') != 'silex') return;
+        if($this->container->get('request')->get('_controller') != 'silex') return;
         $this->setDebugMode();
         if ($this->app->offsetExists('db')) $this->integrateDoctrine();
         if ($this->app->offsetExists('db.orm.em')) $this->integrateDoctrineORM();
@@ -29,9 +29,15 @@ class ApplicationIntegrator
         if ($this->app->offsetExists('form.factory')) $this->integrateForm();
         if ($this->app->offsetExists('session')) $this->integrateSession();
         if ($this->app->offsetExists('request')) $this->integrateRequest();
+        if ($this->app->offsetExists('mailer')) $this->integrateMailer();
         $this->integrateEventDispatcher();
         $this->app->onEarlyKernelRequest($event);
         $this->app->onKernelRequest($event);
+    }
+
+    private function integrateMailer()
+    {
+        $this->app['mailer']=$this->container->get('mailer');
     }
 
     private function integrateRequest()
@@ -65,10 +71,15 @@ class ApplicationIntegrator
         $configuration = $em->getConfiguration();
         $metadata_driver= $configuration->getMetadataDriverImpl();
         $silex_configuration=$silex_em->getConfiguration();
-        $merged_driver = new MappingDriverChain;
-        $merged_driver->addDriver($silex_configuration->getMetadataDriverImpl());
-        $merged_driver->addDriver($metadata_driver);
-        $configuration->setMetadataDriverImpl($merged_driver);
+        $silex_meta_driver = $silex_configuration->getMetadataDriverImpl();
+        if ($silex_meta_driver instanceof MappingDriverChain && $metadata_driver instanceof MappingDriverChain) {
+            foreach ($silex_meta_driver->getDrivers() as $namespace => $driver) {
+                $metadata_driver->addDriver($driver, $namespace);
+            }
+        }
+        else{
+            throw new \Exception('Only chains are integrated for now');
+        }
         $event_manager = $em->getEventManager();
         foreach($silex_em->getEventManager()->getListeners() as $events => $listeners){
             foreach($listeners as $listener){
