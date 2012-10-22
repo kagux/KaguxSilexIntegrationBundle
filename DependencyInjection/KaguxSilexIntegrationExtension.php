@@ -32,6 +32,7 @@ class KaguxSilexIntegrationExtension extends Extension
             'Kagux\\SilexIntegrationBundle\\Silex\\ApplicationIntegrator',
             'Kagux\\SilexIntegrationBundle\\Silex\\Route\\Converter',
             'Kagux\\SilexIntegrationBundle\\Router\\Loader\\SilexLoader',
+            'Kagux\\SilexIntegrationBundle\\Doctrine\\Metadata\\DriverFactory',
             'Kagux\\SilexIntegrationBundle\\Twig\\Form\\Engine\\Resources\\Resolver'
         ));
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));

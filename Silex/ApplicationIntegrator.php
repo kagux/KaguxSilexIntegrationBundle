@@ -68,18 +68,6 @@ class ApplicationIntegrator
         $silex_em = $this->app['db.orm.em'];
         /** @var $em  \Doctrine\ORM\EntityManager*/
         $em=$this->container->get('doctrine.orm.default_entity_manager');
-        $configuration = $em->getConfiguration();
-        $metadata_driver= $configuration->getMetadataDriverImpl();
-        $silex_configuration=$silex_em->getConfiguration();
-        $silex_meta_driver = $silex_configuration->getMetadataDriverImpl();
-        if ($silex_meta_driver instanceof MappingDriverChain && $metadata_driver instanceof MappingDriverChain) {
-            foreach ($silex_meta_driver->getDrivers() as $namespace => $driver) {
-                $metadata_driver->addDriver($driver, $namespace);
-            }
-        }
-        else{
-            throw new \Exception('Only chains are integrated for now');
-        }
         $event_manager = $em->getEventManager();
         foreach($silex_em->getEventManager()->getListeners() as $events => $listeners){
             foreach($listeners as $listener){

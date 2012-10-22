@@ -42,3 +42,12 @@ services:
     class: array
     factory_service: silex.integration.twig.form.resources.resolver
     factory_method: resolve
+
+ silex.doctrine.orm.default_metadata_driver.factory:
+    class: Kagux\SilexIntegrationBundle\Doctrine\Metadata\DriverFactory
+    arguments: [@silex.app, @original.doctrine.orm.default_metadata_driver]
+
+ silex.doctrine.orm.default_metadata_driver:
+    class: Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain
+    factory_service: silex.doctrine.orm.default_metadata_driver.factory
+    factory_method: create
