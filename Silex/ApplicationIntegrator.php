@@ -21,10 +21,10 @@ class ApplicationIntegrator
 
     public function integrate(GetResponseEvent $event)
     {
-        if($this->container->get('request')->get('_controller') != 'silex') return;
+//        if($this->container->get('request')->get('_controller') != 'silex') return;
         $this->setDebugMode();
-//        if ($this->app->offsetExists('db')) $this->integrateDoctrine();
-//        if ($this->app->offsetExists('db.orm.em')) $this->integrateDoctrineORM();
+        if ($this->app->offsetExists('db')) $this->integrateDoctrine();
+        if ($this->app->offsetExists('db.orm.em')) $this->integrateDoctrineORM();
         if ($this->app->offsetExists('twig')) $this->integrateTwig();
         if ($this->app->offsetExists('form.factory')) $this->integrateForm();
         if ($this->app->offsetExists('session')) $this->integrateSession();
