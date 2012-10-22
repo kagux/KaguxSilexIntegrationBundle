@@ -24,10 +24,8 @@ class SilexLoader  extends Loader
 
     public function load($resource, $type = null)
     {
-        /** @var $silex_routes  \Symfony\Component\Routing\RouteCollection */
-        $this->app->flush(); //check with this one commented
-        $silex_routes =  $this->app['routes'];
-        return $this->integrateRoutes($silex_routes);
+        $this->app->flush();
+        return $this->integrateRoutes($this->app['routes']);
     }
 
     private function integrateRoutes(RouteCollection $routes)
@@ -41,14 +39,18 @@ class SilexLoader  extends Loader
                 $integratedRoutes->addCollection($this->integrateRoutes($route));
             }
             else {
-                $integratedRoute =clone $route;
-                $integratedRoute->setDefault('_controller','silex');
-                $integratedRoutes->add($name, $integratedRoute);
+                $integratedRoutes->add($name, $this->integrateRoute($route));
             }
         }
-
         return $integratedRoutes;
-
     }
+
+    private function integrateRoute(Route $route)
+    {
+        $integratedRoute = clone $route;
+        $integratedRoute->setDefault('_controller', 'silex');
+        return $integratedRoute;
+    }
+
 
 }
