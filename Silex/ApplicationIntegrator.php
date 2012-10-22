@@ -3,6 +3,7 @@
 namespace Kagux\SilexIntegrationBundle\Silex;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Kagux\SilexIntegrationBundle\Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Silex\SilexEvents;
 use Silex\Application;
@@ -18,17 +19,40 @@ class ApplicationIntegrator
         $this->app=$app;
     }
 
-    public function integrate()
+    public function integrate(GetResponseEvent $event)
     {
         if($this->container->get('request')->get('_controller') != 'silex') return;
         $this->setDebugMode();
-        if ($this->app->offsetExists('db')) $this->integrateDoctrine();
-        if ($this->app->offsetExists('db.orm.em')) $this->integrateDoctrineORM();
+//        if ($this->app->offsetExists('db')) $this->integrateDoctrine();
+//        if ($this->app->offsetExists('db.orm.em')) $this->integrateDoctrineORM();
         if ($this->app->offsetExists('twig')) $this->integrateTwig();
+        if ($this->app->offsetExists('form.factory')) $this->integrateForm();
+        if ($this->app->offsetExists('session')) $this->integrateSession();
+        if ($this->app->offsetExists('request')) $this->integrateRequest();
         $this->integrateEventDispatcher();
+        $this->app->onEarlyKernelRequest($event);
+        $this->app->onKernelRequest($event);
     }
+
+    private function integrateRequest()
+    {
+        $this->app['request']=$this->container->get('request');
+    }
+
+    private function integrateSession()
+    {
+        $this->app['session']=$this->container->get('session');
+    }
+
+    private function integrateForm()
+    {
+        $this->app['form.factory']=$this->container->get('form.factory');
+    }
+
     private function integrateDoctrine()
     {
+        $cache = $this->container->get('doctrine.orm.default_entity_manager')->getConfiguration()->getResultCacheImpl();
+        $this->container->get('doctrine.dbal.default_connection')->getConfiguration()->setResultCacheImpl($cache);
         $this->app['db']=$this->container->get('doctrine.dbal.default_connection');
     }
 
@@ -70,7 +94,10 @@ class ApplicationIntegrator
             $twig->setLoader($loader);
         }
         $loader->addLoader($this->app['twig.loader']);
+        $twig->addGlobal('app',$this->app);
+        /** @var $form_ext \Symfony\Bridge\Twig\Extension\FormExtension */
         $this->app['twig'] = $twig;
+
     }
 
     private function integrateEventDispatcher()

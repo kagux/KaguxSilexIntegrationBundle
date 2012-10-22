@@ -4,6 +4,7 @@ parameters:
  silex.app.class: Silex\Application
  silex.app.integrator.class: Kagux\SilexIntegrationBundle\Silex\ApplicationIntegrator
  silex.route.converter.class: Kagux\SilexIntegrationBundle\Silex\Route\Converter
+ silex.integration.twig.form.resources.resolver.class: Kagux\SilexIntegrationBundle\Twig\Form\Engine\Resources\Resolver
 
 services:
 
@@ -32,3 +33,12 @@ services:
     scope: request
     tags:
       - { name: kernel.event_listener, event: kernel.request, method: convert, priority: -10}
+
+ silex.integration.twig.form.resources.resolver:
+    class: %silex.integration.twig.form.resources.resolver.class%
+    arguments: [@silex.app, %twig.form.resources%]
+
+ silex.integration.twig.form.resources:
+    class: array
+    factory_service: silex.integration.twig.form.resources.resolver
+    factory_method: resolve

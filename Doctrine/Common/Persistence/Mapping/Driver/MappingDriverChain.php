@@ -79,7 +79,7 @@ class MappingDriverChain implements MappingDriver
         /* @var $driver MappingDriver */
         foreach ($this->drivers AS $driver) {
             try{
-                if($driver->isTransient($className)) return true;
+                return $driver->isTransient($className);
             }
             catch(\Exception $e){}
         }
