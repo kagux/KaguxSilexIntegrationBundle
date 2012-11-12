@@ -3,7 +3,7 @@
 namespace Kagux\SilexIntegrationBundle\Silex;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
+use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Silex\SilexEvents;
 use Silex\Application;
@@ -30,9 +30,7 @@ class ApplicationIntegrator
         if ($this->app->offsetExists('session')) $this->integrateSession();
         if ($this->app->offsetExists('request')) $this->integrateRequest();
         if ($this->app->offsetExists('mailer')) $this->integrateMailer();
-        $this->integrateEventDispatcher();
-        $this->app->onEarlyKernelRequest($event);
-        $this->app->onKernelRequest($event);
+        $this->integrateEventDispatcher($event);
     }
 
     private function integrateMailer()
@@ -99,11 +97,32 @@ class ApplicationIntegrator
 
     }
 
-    private function integrateEventDispatcher()
+
+    private function integrateEventDispatcher(GetResponseEvent $event)
     {
-        $event_dispatcher = $this->container->get('event_dispatcher');
-        $event_dispatcher->addSubscriber(new \Silex\EventListener\MiddlewareListener($this->app));
-        $this->app['dispatcher'] = $event_dispatcher;
+        $this->filterSilexListeners(KernelEvents::REQUEST);
+        $this->app['dispatcher']->dispatch(KernelEvents::REQUEST, $event);
+        $this->addSilexListeners(KernelEvents::RESPONSE);
+        $this->app['dispatcher'] = $this->container->get('event_dispatcher');
+    }
+
+    private function filterSilexListeners($eventName)
+    {
+        foreach($this->app['dispatcher']->getListeners($eventName) as $listener){
+            if (!$listener instanceof \Closure){
+                $this->app['dispatcher']->removeListener($eventName, $listener);
+            }
+        }
+    }
+
+    private function addSilexListeners($eventName)
+    {
+        foreach($this->app['dispatcher']->getListeners($eventName) as $listener){
+            if ($listener instanceof \Closure){
+                $this->container->get('event_dispatcher')->addListener($eventName, $listener);
+            }
+        }
+
     }
 
 }
