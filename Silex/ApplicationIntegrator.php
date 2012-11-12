@@ -102,7 +102,7 @@ class ApplicationIntegrator
     private function integrateEventDispatcher()
     {
         $event_dispatcher = $this->container->get('event_dispatcher');
-        $event_dispatcher->addSubscriber(new Silex\EventListener\MiddlewareListener);
+        $event_dispatcher->addSubscriber(new \Silex\EventListener\MiddlewareListener);
         $this->app['dispatcher'] = $event_dispatcher;
     }
 
