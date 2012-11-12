@@ -102,22 +102,8 @@ class ApplicationIntegrator
     private function integrateEventDispatcher()
     {
         $event_dispatcher = $this->container->get('event_dispatcher');
-        $event_dispatcher->addSubscriber($this->app);
-        $this->addSilexListeners(SilexEvents::AFTER);
-        $this->addSilexListeners(SilexEvents::BEFORE);
-        $this->addSilexListeners(SilexEvents::ERROR);
-        $this->addSilexListeners(SilexEvents::FINISH);
+        $event_dispatcher->addSubscriber(new Silex\EventListener\MiddlewareListener);
         $this->app['dispatcher'] = $event_dispatcher;
     }
-
-    private function addSilexListeners($eventName)
-    {
-        foreach($this->app['dispatcher']->getListeners($eventName) as $listener){
-            $this->container->get('event_dispatcher')->addListener($eventName, $listener);
-        }
-
-    }
-
-
 
 }
