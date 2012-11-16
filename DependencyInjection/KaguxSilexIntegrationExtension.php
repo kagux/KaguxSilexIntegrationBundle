@@ -29,7 +29,7 @@ class KaguxSilexIntegrationExtension extends Extension
         $container->setParameter('silex.app.service', $config['app_service']);
         $this->addClassesToCompile(array(
             'Kagux\\SilexIntegrationBundle\\HttpKernel\\ControllerResolver',
-            'Kagux\\SilexIntegrationBundle\\Silex\\ApplicationIntegrator',
+//            'Kagux\\SilexIntegrationBundle\\Silex\\ApplicationIntegrator',
             'Kagux\\SilexIntegrationBundle\\Silex\\Route\\Converter',
             'Kagux\\SilexIntegrationBundle\\Router\\Loader\\SilexLoader',
             'Kagux\\SilexIntegrationBundle\\Doctrine\\Metadata\\DriverFactory',

@@ -30,6 +30,7 @@ class ApplicationIntegrator
         if ($this->app->offsetExists('session')) $this->integrateSession();
         if ($this->app->offsetExists('request')) $this->integrateRequest();
         if ($this->app->offsetExists('mailer')) $this->integrateMailer();
+        if ($this->app->offsetExists('monolog')) $this->integrateMonolog();
         $this->integrateEventDispatcher($event);
     }
 
@@ -123,6 +124,11 @@ class ApplicationIntegrator
             }
         }
 
+    }
+
+    private function integrateMonolog()
+    {
+        $this->app['monolog']=$this->container->get('logger');
     }
 
 }
