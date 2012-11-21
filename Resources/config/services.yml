@@ -2,7 +2,6 @@ parameters:
  silex.controller_resolver.class: Kagux\SilexIntegrationBundle\HttpKernel\ControllerResolver
  silex.routes.loader.class: Kagux\SilexIntegrationBundle\Router\Loader\SilexLoader
  silex.app.class: Silex\Application
- silex.app.integrator.class: Kagux\SilexIntegrationBundle\Silex\ApplicationIntegrator
  silex.route.converter.class: Kagux\SilexIntegrationBundle\Silex\Route\Converter
  silex.integration.twig.form.resources.resolver.class: Kagux\SilexIntegrationBundle\Twig\Form\Engine\Resources\Resolver
  silex.middleware.listener.class: Silex\EventListener\MiddlewareListener
@@ -13,12 +12,6 @@ services:
 
  silex.app:
     class: %silex.app.class%
-
- silex.app.integrator:
-    class: %silex.app.integrator.class%
-    arguments: [@service_container, @silex.app, @silex.integration.service.pool]
-    tags:
-      - { name: kernel.event_listener, event: kernel.request, method: integrate, priority: 31}
 
  silex.controller_resolver:
     class: %silex.controller_resolver.class%
