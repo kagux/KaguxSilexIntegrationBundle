@@ -21,4 +21,11 @@ class KaguxSilexIntegrationBundle extends Bundle
         $container->addCompilerPass(new AddIntegratorsPass());
     }
 
+    public function boot()
+    {
+        $pool = $this->container->get('silex.integration.service.pool');
+        $pool->integrate();
+    }
+
+
 }
