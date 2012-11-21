@@ -1,0 +1,10 @@
+parameters:
+  debug_mode.integrator.class: Kagux\SilexIntegrationBundle\Silex\Integration\Service\Integrator\DebugModeIntegrator
+
+services:
+
+  debug_mode.integrator:
+      class: %debug_mode.integrator.class%
+      tags:
+        - { name: silex.integrator, id: debug }
+

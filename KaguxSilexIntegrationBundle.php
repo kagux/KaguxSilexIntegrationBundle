@@ -3,6 +3,7 @@
 namespace Kagux\SilexIntegrationBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
+use Kagux\SilexIntegrationBundle\DependencyInjection\Compiler\AddIntegratorsPass;
 use Kagux\SilexIntegrationBundle\DependencyInjection\Compiler\TwigFormIntegrationPass;
 use Kagux\SilexIntegrationBundle\DependencyInjection\Compiler\SilexAppServiceIntegrationPass;
 use Kagux\SilexIntegrationBundle\DependencyInjection\Compiler\DoctrineMetadataIntegrationPass;
@@ -17,6 +18,7 @@ class KaguxSilexIntegrationBundle extends Bundle
         $container->addCompilerPass(new DoctrineMetadataIntegrationPass());
         $container->addCompilerPass(new SilexAppServiceIntegrationPass());
         $container->addCompilerPass(new TwigFormIntegrationPass());
+        $container->addCompilerPass(new AddIntegratorsPass());
     }
 
 }

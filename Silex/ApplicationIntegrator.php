@@ -3,20 +3,22 @@
 namespace Kagux\SilexIntegrationBundle\Silex;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Kagux\SilexIntegrationBundle\Silex\Integration\Service\Pool\ServicePool;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
-use Silex\SilexEvents;
 use Silex\Application;
 
 class ApplicationIntegrator
 {
     private  $container;
     private  $app;
+    private  $servicePool;
 
-    public function __construct(ContainerInterface $container, Application $app)
+    public function __construct(ContainerInterface $container, Application $app, ServicePool $servicePool)
     {
         $this->container=$container;
         $this->app=$app;
+        $this->servicePool=$servicePool;
     }
 
     public function integrate(GetResponseEvent $event)
@@ -32,6 +34,7 @@ class ApplicationIntegrator
         if ($this->app->offsetExists('mailer')) $this->integrateMailer();
         if ($this->app->offsetExists('monolog')) $this->integrateMonolog();
         $this->integrateEventDispatcher($event);
+        $this->servicePool->integrate();
     }
 
     private function integrateMailer()

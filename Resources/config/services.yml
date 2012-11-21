@@ -7,6 +7,7 @@ parameters:
  silex.integration.twig.form.resources.resolver.class: Kagux\SilexIntegrationBundle\Twig\Form\Engine\Resources\Resolver
  silex.middleware.listener.class: Silex\EventListener\MiddlewareListener
  silex.string_to_response.listener.class: Silex\EventListener\StringToResponseListener
+ silex.integration.service.pool.class: Kagux\SilexIntegrationBundle\Silex\Integration\Service\Pool\ServicePool
 
 services:
 
@@ -15,7 +16,7 @@ services:
 
  silex.app.integrator:
     class: %silex.app.integrator.class%
-    arguments: [@service_container, @silex.app]
+    arguments: [@service_container, @silex.app, @silex.integration.service.pool]
     tags:
       - { name: kernel.event_listener, event: kernel.request, method: integrate, priority: 31}
 
@@ -65,3 +66,8 @@ services:
     class: Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain
     factory_service: silex.doctrine.orm.default_metadata_driver.factory
     factory_method: create
+
+ silex.integration.service.pool:
+    class: %silex.integration.service.pool.class%
+    calls:
+      - [setSilex, [@silex.app] ]
