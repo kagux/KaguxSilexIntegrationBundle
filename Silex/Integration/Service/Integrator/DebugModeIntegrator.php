@@ -4,8 +4,8 @@ use Kagux\SilexIntegrationBundle\Silex\Integration\Service\AbstractServiceIntegr
 
 class DebugModeIntegrator extends AbstractServiceIntegrator
 {
-    public function integrate()
+    public function integrate($serviceId)
     {
-        $this->silex['debug'] = in_array($this->container->get('kernel')->getEnvironment(), array('test', 'dev'));
+        $this->silex[$serviceId] = in_array($this->container->get('kernel')->getEnvironment(), array('test', 'dev'));
     }
 }
