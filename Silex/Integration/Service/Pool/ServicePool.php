@@ -22,6 +22,7 @@ class ServicePool extends SilexAware
 
     public function integrate()
     {
+        asort($this->servicePool);
         foreach($this->servicePool as $services){
             $this->integrateServices($services);
         }
