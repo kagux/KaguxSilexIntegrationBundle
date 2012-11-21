@@ -3,5 +3,5 @@ namespace Kagux\SilexIntegrationBundle\Silex\Integration\Service;
 
 interface ServiceIntegratorInterface
 {
-    public function integrate();
+    public function integrate($serviceId);
 }

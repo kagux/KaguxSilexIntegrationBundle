@@ -33,7 +33,7 @@ class ServicePool extends SilexAware
         foreach ($services as $silexServiceId => $integrator)
             /** @var $integrator ServiceIntegratorInterface */
             if ($this->serviceShouldBeIntegrated($silexServiceId)) {
-                $integrator->integrate();
+                $integrator->integrate($silexServiceId);
             }
     }
 

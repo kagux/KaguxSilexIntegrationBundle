@@ -27,7 +27,7 @@ abstract class AbstractServiceIntegrator implements ContainerAwareInterface, Sil
         $this->container=$container;
     }
 
-    abstract public  function integrate();
+    abstract public  function integrate($serviceId);
 
     public function getMode()
     {
