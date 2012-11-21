@@ -1,5 +1,10 @@
 parameters:
   debug_mode.integrator.class: Kagux\SilexIntegrationBundle\Silex\Integration\Service\Integrator\DebugModeIntegrator
+  doctrine.dbal.integrator.class: Kagux\SilexIntegrationBundle\Silex\Integration\Service\Integrator\DoctrineDBALIntegrator
+  doctrine.orm.integrator.class: Kagux\SilexIntegrationBundle\Silex\Integration\Service\Integrator\DoctrineORMIntegrator
+  twig.integrator.class: Kagux\SilexIntegrationBundle\Silex\Integration\Service\Integrator\TwigIntegrator
+  silex.simple.integrator.class: Kagux\SilexIntegrationBundle\Silex\Integration\Service\Integrator\SimpleIntegrator
+  event_dispatcher.integrator.class: Kagux\SilexIntegrationBundle\Silex\Integration\Service\Integrator\EventDispatcherIntegrator
 
 services:
 
@@ -7,4 +12,51 @@ services:
       class: %debug_mode.integrator.class%
       tags:
         - { name: silex.integrator, id: debug }
+
+  event_dispatcher.integrator:
+      class: %event_dispatcher.integrator.class%
+      tags:
+        - { name: silex.integrator, id: dispatcher }
+
+  doctrine.orm.integrator:
+      class: %doctrine.orm.integrator.class%
+      tags:
+        - { name: silex.integrator, id: db.orm.em }
+
+  doctrine.dbal.integrator:
+      class: %silex.simple.integrator.class%
+      arguments: [doctrine.dbal.default_connection]
+      tags:
+        - { name: silex.integrator, id: db, priority: 10 }
+
+  twig.integrator:
+      class: %twig.integrator.class%
+      tags:
+        - { name: silex.integrator, id: twig }
+
+  form.integrator:
+      class: %silex.simple.integrator.class%
+      arguments: [form.factory]
+      tags:
+        - { name: silex.integrator, id: form}
+
+  session.integrator:
+      class: %silex.simple.integrator.class%
+      arguments: [session]
+      tags:
+        - { name: silex.integrator, id: session}
+
+  mailer.integrator:
+      class: %silex.simple.integrator.class%
+      arguments: [mailer]
+      tags:
+        - { name: silex.integrator, id: mailer}
+
+  monolog.integrator:
+      class: %silex.simple.integrator.class%
+      arguments: [logger]
+      tags:
+        - { name: silex.integrator, id: monolog}
+
+
 
