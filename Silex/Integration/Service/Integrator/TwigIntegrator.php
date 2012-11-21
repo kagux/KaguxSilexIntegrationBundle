@@ -16,6 +16,7 @@ class TwigIntegrator extends AbstractServiceIntegrator
         }
         $loader->addLoader($this->silex['twig.loader']);
         $twig->addGlobal('app',$this->silex);
+        $twig->addGlobal('silex',$this->silex);
         /** @var $form_ext \Symfony\Bridge\Twig\Extension\FormExtension */
         $this->silex[$serviceId] = $twig;
 
