@@ -7,7 +7,7 @@ parameters:
  silex.middleware.listener.class: Silex\EventListener\MiddlewareListener
  silex.string_to_response.listener.class: Silex\EventListener\StringToResponseListener
  silex.integration.service.pool.class: Kagux\SilexIntegrationBundle\Silex\Integration\Service\Pool\ServicePool
- silex.integration.service.importer.class: Kagux\SilexIntegrationBundle\Silex\Integration\Service\Importer\ServiceImporter
+
 
 services:
 
@@ -66,6 +66,4 @@ services:
     calls:
       - [setSilex, [@silex.app] ]
 
- silex.integration.service.importer:
-    class: %silex.integration.service.importer.class%
-    arguments: [@service_container, @silex.app]
+
