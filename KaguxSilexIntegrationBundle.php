@@ -34,6 +34,8 @@ class KaguxSilexIntegrationBundle extends Bundle
              'a chance to integrate requested service. You can wrap it in a closure though!');
         }
         $pool->integrate();
+        $this->container->get('silex.integration.service.importer')->import();
+        $this->container->get('current_user');
     }
 
 
