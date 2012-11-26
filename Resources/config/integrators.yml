@@ -4,6 +4,7 @@ parameters:
   doctrine.orm.integrator.class: Kagux\SilexIntegrationBundle\Silex\Integration\Service\Integrator\DoctrineORMIntegrator
   twig.integrator.class: Kagux\SilexIntegrationBundle\Silex\Integration\Service\Integrator\TwigIntegrator
   silex.simple.integrator.class: Kagux\SilexIntegrationBundle\Silex\Integration\Service\Integrator\SimpleIntegrator
+  silex.request.integrator.class: Kagux\SilexIntegrationBundle\Silex\Integration\Service\Integrator\RequestIntegrator
   event_dispatcher.integrator.class: Kagux\SilexIntegrationBundle\Silex\Integration\Service\Integrator\EventDispatcherIntegrator
 
 services:
@@ -45,6 +46,13 @@ services:
       arguments: [session]
       tags:
         - { name: silex.integrator, id: session}
+
+  request.integrator:
+      class: %silex.request.integrator.class%
+      arguments: [@request, @silex.app]
+      scope: request
+      tags:
+        - { name: kernel.event_listener, event: kernel.request, method: integrate, priority: 2000}
 
   mailer.integrator:
       class: %silex.simple.integrator.class%
