@@ -16,7 +16,7 @@ class AddAutoIntegratorsPass  implements CompilerPassInterface
         foreach ($container->findTaggedServiceIds('silex.auto_integrator') as $id => $tags) {
             $integrator = new Definition('Kagux\SilexIntegrationBundle\Silex\Integration\Service\Integrator\SimpleIntegrator', array($id));
             $integrator->addMethodCall('setContainer',array(new Reference('service_container')));
-            $integrator->addMethodCall('setSilex',array(new Reference('silex.app')));
+            $integrator->addMethodCall('setSilex',array(new Reference($container->getParameter('silex.app.service'))));
             $pool->addMethodCall('addServiceIntegrator', array($integrator, $id, ServiceIntegrationMode::CREATE_IF_NO_SERVICE));
         }
     }
