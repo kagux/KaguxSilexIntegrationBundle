@@ -19,6 +19,7 @@ class DriverFactory
 
     public function create()
     {
+        if(!isset($this->app['db.orm.em'])) return $this->driver;
         $silex_configuration=$this->app['db.orm.em']->getConfiguration();
         $silex_meta_driver = $silex_configuration->getMetadataDriverImpl();
         if ($silex_meta_driver instanceof MappingDriverChain) {
